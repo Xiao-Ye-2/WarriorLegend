@@ -6,11 +6,7 @@ using UnityEngine;
 public static class EventHandler
 {
     private static readonly Dictionary<string, Delegate> eventCache = new Dictionary<string, Delegate>();
-
-    public static event Action<Transform> PlayerHurtEvent;
-    public static event Action PlayerDeathEvent;
     public static event Action PlayerAttackEvent;
-
 
     private static Delegate GetEventDelegate(string eventName)
     {

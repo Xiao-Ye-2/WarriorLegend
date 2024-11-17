@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(PhysicsCheck))]
+[RequireComponent(typeof(Rigidbody2D), typeof(PhysicsCheck), typeof(Character))]
 public class PlayerController : MonoBehaviour
 {
     private PlayerInputControl inputControl;
@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb2d;
     private PhysicsCheck physicsCheck;
     private Collider2D coll;
+    private Character character;
 
     [Header("Basic Settings")]
     public float speed;
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour
         physicsCheck = GetComponent<PhysicsCheck>();
         inputControl = new PlayerInputControl();
         coll = GetComponent<Collider2D>();
+        character = GetComponent<Character>();
         normal = coll.sharedMaterial;
 
         inputControl.Gameplay.Jump.performed += Jump;
@@ -40,14 +42,16 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        character.OnHurtEvent += PlayerHurt;
+        character.OnDeadEvent += PlayerDead;
         inputControl.Enable();
-        EventHandler.PlayerHurtEvent += PlayerHurt;
     }
 
     private void OnDisable()
     {
+        character.OnHurtEvent -= PlayerHurt;
+        character.OnDeadEvent -= PlayerDead;
         inputControl.Disable();
-        EventHandler.PlayerHurtEvent -= PlayerHurt;
     }
 
     private void Update()
@@ -79,6 +83,7 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerAttack(InputAction.CallbackContext context)
     {
+        if (!physicsCheck.isOnGround) return;
         EventHandler.CallEvent(nameof(EventHandler.PlayerAttackEvent));
         isAttack = true;
     }

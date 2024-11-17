@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Animator), typeof(Character))]
 [RequireComponent(typeof(PlayerController))]
 public class PlayerAnimation : MonoBehaviour
 {
@@ -12,6 +12,7 @@ public class PlayerAnimation : MonoBehaviour
     private Rigidbody2D rb;
     private PhysicsCheck physicsCheck;
     private PlayerController playerController;
+    private Character character;
 
     #region Animation String Hash
     private readonly int velocityX_HASH = Animator.StringToHash("velocityX");
@@ -29,17 +30,18 @@ public class PlayerAnimation : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         physicsCheck = GetComponent<PhysicsCheck>();
         playerController = GetComponent<PlayerController>();
+        character = GetComponent<Character>();
     }
 
     private void OnEnable()
     {
-        EventHandler.PlayerHurtEvent += PlayHurt;
+        character.OnHurtEvent += PlayHurt;
         EventHandler.PlayerAttackEvent += PlayAttack;
     }
 
     private void OnDisable()
     {
-        EventHandler.PlayerHurtEvent -= PlayHurt;
+        character.OnHurtEvent -= PlayHurt;
         EventHandler.PlayerAttackEvent -= PlayAttack;
     }
 

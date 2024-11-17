@@ -1,8 +1,13 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 public class Character : MonoBehaviour
 {
+    public Action<Transform> OnHurtEvent;
+    public Action OnDeadEvent;
+
     [Header("Basic Settings")]
     public float maxHealth;
     public float currentHealth;
@@ -11,9 +16,9 @@ public class Character : MonoBehaviour
     public float invulnerableDuration;
     private float invulnerableTimer;
     private bool isInvulnerable;
-
-
+    public UnityEvent<Character> OnHealthChange;
     private bool isPlayer = false;
+    internal bool isDead;
 
     private void Awake()
     {
@@ -23,6 +28,7 @@ public class Character : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
+        OnHealthChange?.Invoke(this);
     }
 
     private void Update()
@@ -45,16 +51,15 @@ public class Character : MonoBehaviour
         {
             TriggerInvulnerable();
             currentHealth -= attack.damage;
-            if (isPlayer)
-            {
-                EventHandler.CallEvent(nameof(EventHandler.PlayerHurtEvent), attack.transform);
-            }
+            OnHurtEvent?.Invoke(attack.transform);
         }
         else
         {
             currentHealth = 0;
-            GetComponent<PlayerController>()?.PlayerDead();
+            OnDeadEvent?.Invoke();
         }
+
+        OnHealthChange?.Invoke(this);
     }
 
     private void Die()

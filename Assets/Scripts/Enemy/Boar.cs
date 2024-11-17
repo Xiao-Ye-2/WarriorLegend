@@ -1,8 +1,9 @@
 public class Boar : Enemy
 {
-    protected override void Move()
+    protected override void Awake()
     {
-        base.Move();
-        anim.SetBool(walk_HASH, true);
+        base.Awake();
+        patrolState = new BoarPatrolState();
+        chaseState = new BoarChaseState();
     }
 }
