@@ -56,5 +56,8 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "WarriorLegend.sln"
+    "dotnet.defaultSolution": "WarriorLegend.sln",
+    "cSpell.words": [
+        "Gameplay"
+    ]
 }
