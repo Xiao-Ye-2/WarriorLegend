@@ -9,38 +9,60 @@ public class PlayerController : MonoBehaviour
     private Vector2 inputDirection;
     private Rigidbody2D rb2d;
     private PhysicsCheck physicsCheck;
+    private Collider2D coll;
 
     [Header("Basic Settings")]
     public float speed;
     public float jumpForce;
+    public float hurtForce;
+    private bool isHurt;
+    [Header("Physics Materials")]
+    private PhysicsMaterial2D normal;
+    public PhysicsMaterial2D noFriction;
+
+    #region Internal Parameters
+    public bool isAttack;
+    internal bool isDead;
+
+    #endregion
+
     private void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
         physicsCheck = GetComponent<PhysicsCheck>();
         inputControl = new PlayerInputControl();
+        coll = GetComponent<Collider2D>();
+        normal = coll.sharedMaterial;
 
         inputControl.Gameplay.Jump.performed += Jump;
+        inputControl.Gameplay.Attack.started += PlayerAttack;
     }
 
     private void OnEnable()
     {
         inputControl.Enable();
+        EventHandler.PlayerHurtEvent += PlayerHurt;
     }
 
     private void OnDisable()
     {
         inputControl.Disable();
+        EventHandler.PlayerHurtEvent -= PlayerHurt;
     }
 
     private void Update()
     {
         inputDirection = inputControl.Gameplay.Move.ReadValue<Vector2>();
+        CheckState();
     }
 
     private void FixedUpdate()
     {
+        if (isHurt || isAttack) return;
         Move();
     }
+
+    #region Animation Events
 
     private void Move()
     {
@@ -53,5 +75,38 @@ public class PlayerController : MonoBehaviour
     {
         if (!physicsCheck.isOnGround) return;
         rb2d.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+    }
+
+    private void PlayerAttack(InputAction.CallbackContext context)
+    {
+        EventHandler.CallEvent(nameof(EventHandler.PlayerAttackEvent));
+        isAttack = true;
+    }
+
+    private void PlayerHurt(Transform attacker)
+    {
+        isHurt = true;
+        rb2d.velocity = Vector2.zero;
+        Vector2 dir = new Vector2(transform.position.x - attacker.position.x, 0).normalized;
+
+        rb2d.AddForce(dir * hurtForce, ForceMode2D.Impulse);
+    }
+
+    #endregion
+
+    public void ResetHurt()
+    {
+        isHurt = false;
+    }
+
+    public void PlayerDead()
+    {
+        isDead = true;
+        inputControl.Gameplay.Disable();
+    }
+
+    private void CheckState()
+    {
+        coll.sharedMaterial = physicsCheck.isOnGround ? normal : noFriction;
     }
 }

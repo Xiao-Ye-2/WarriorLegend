@@ -12,6 +12,14 @@ public class Character : MonoBehaviour
     private float invulnerableTimer;
     private bool isInvulnerable;
 
+
+    private bool isPlayer = false;
+
+    private void Awake()
+    {
+        isPlayer = GetComponent<PlayerController>() != null;
+    }
+
     private void Start()
     {
         currentHealth = maxHealth;
@@ -33,11 +41,19 @@ public class Character : MonoBehaviour
     {
         if (isInvulnerable) return;
 
-        TriggerInvulnerable();
-        currentHealth -= attack.damage;
-        if (currentHealth <= 0)
+        if (currentHealth > attack.damage)
         {
-            Die();
+            TriggerInvulnerable();
+            currentHealth -= attack.damage;
+            if (isPlayer)
+            {
+                EventHandler.CallEvent(nameof(EventHandler.PlayerHurtEvent), attack.transform);
+            }
+        }
+        else
+        {
+            currentHealth = 0;
+            GetComponent<PlayerController>()?.PlayerDead();
         }
     }
 
