@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Bounds
+  - Water
+  - Spike
+  - Interactable
   layers:
   - Default
   - TransparentFX
@@ -44,9 +48,15 @@ TagManager:
   - name: Back
     uniqueID: 170312589
     locked: 0
+  - name: Spike
+    uniqueID: 882958719
+    locked: 0
   - name: Middle
     uniqueID: 720515597
     locked: 0
   - name: Front
     uniqueID: 2063389175
+    locked: 0
+  - name: Water
+    uniqueID: 4223470223
     locked: 0

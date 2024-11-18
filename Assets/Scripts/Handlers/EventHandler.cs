@@ -7,6 +7,7 @@ public static class EventHandler
 {
     private static readonly Dictionary<string, Delegate> eventCache = new Dictionary<string, Delegate>();
     public static event Action PlayerAttackEvent;
+    public static event Action CameraShakeEvent;
 
     private static Delegate GetEventDelegate(string eventName)
     {

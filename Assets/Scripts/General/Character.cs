@@ -25,6 +25,20 @@ public class Character : MonoBehaviour
         isPlayer = GetComponent<PlayerController>() != null;
     }
 
+    private void OnEnable()
+    {
+        OnHurtEvent += TriggerCameraShake;
+    }
+    private void OnDisable()
+    {
+        OnHurtEvent -= TriggerCameraShake;
+    }
+
+    private void TriggerCameraShake(Transform transform)
+    {
+        EventHandler.CallEvent(nameof(EventHandler.CameraShakeEvent));
+    }
+
     private void Start()
     {
         currentHealth = maxHealth;
@@ -40,6 +54,16 @@ public class Character : MonoBehaviour
             {
                 isInvulnerable = false;
             }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Water"))
+        {
+            currentHealth = 0;
+            OnDeadEvent?.Invoke();
+            OnHealthChange?.Invoke(this);
         }
     }
 

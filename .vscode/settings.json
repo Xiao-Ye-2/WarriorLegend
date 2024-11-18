@@ -58,6 +58,7 @@
     },
     "dotnet.defaultSolution": "WarriorLegend.sln",
     "cSpell.words": [
+        "Gamepad",
         "Gameplay"
     ]
 }
