@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D), typeof(PhysicsCheck), typeof(Character))]
 public class PlayerController : MonoBehaviour
 {
+    public SceneLoad_SO loadEvent;
+    public VoidEvent_SO afterSceneLoadedEvent;
     private PlayerInputControl inputControl;
     private Vector2 inputDirection;
     private Rigidbody2D rb2d;
@@ -44,6 +46,8 @@ public class PlayerController : MonoBehaviour
     {
         character.OnHurtEvent += PlayerHurt;
         character.OnDeadEvent += PlayerDead;
+        loadEvent.loadRequestEvent += OnLoadEvent;
+        afterSceneLoadedEvent.OnEventRaised += OnAfterSceneLoadEvent;
         inputControl.Enable();
     }
 
@@ -51,6 +55,8 @@ public class PlayerController : MonoBehaviour
     {
         character.OnHurtEvent -= PlayerHurt;
         character.OnDeadEvent -= PlayerDead;
+        loadEvent.loadRequestEvent -= OnLoadEvent;
+        afterSceneLoadedEvent.OnEventRaised -= OnAfterSceneLoadEvent;
         inputControl.Disable();
     }
 
@@ -64,6 +70,16 @@ public class PlayerController : MonoBehaviour
     {
         if (isHurt || isAttack) return;
         Move();
+    }
+
+    private void OnLoadEvent(GameScene_SO sceneToLoad, Vector3 positionToGo, bool fade)
+    {
+        inputControl.Gameplay.Disable();
+    }
+
+    private void OnAfterSceneLoadEvent()
+    {
+        inputControl.Gameplay.Enable();
     }
 
     #region Animation Events

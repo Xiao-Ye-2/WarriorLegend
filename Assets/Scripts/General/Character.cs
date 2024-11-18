@@ -7,6 +7,7 @@ public class Character : MonoBehaviour
 {
     public Action<Transform> OnHurtEvent;
     public Action OnDeadEvent;
+    public VoidEvent_SO OnNewGameEvent;
 
     [Header("Basic Settings")]
     public float maxHealth;
@@ -28,10 +29,12 @@ public class Character : MonoBehaviour
     private void OnEnable()
     {
         OnHurtEvent += TriggerCameraShake;
+        OnNewGameEvent.OnEventRaised += NewGame;
     }
     private void OnDisable()
     {
         OnHurtEvent -= TriggerCameraShake;
+        OnNewGameEvent.OnEventRaised -= NewGame;
     }
 
     private void TriggerCameraShake(Transform transform)
@@ -39,7 +42,7 @@ public class Character : MonoBehaviour
         EventHandler.CallEvent(nameof(EventHandler.CameraShakeEvent));
     }
 
-    private void Start()
+    private void NewGame()
     {
         currentHealth = maxHealth;
         OnHealthChange?.Invoke(this);

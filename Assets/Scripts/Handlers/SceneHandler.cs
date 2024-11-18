@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -9,8 +10,12 @@ public class SceneHandler : MonoBehaviour
 {
     public Transform playerTransform;
     public Vector3 firstPosition;
+    public Vector3 menuPosition;
     public SceneLoad_SO sceneLoadEvent;
+    public SceneLoad_SO unLoadSceneEvent;
+    public VoidEvent_SO newGameEvent;
     public GameScene_SO  firstLoadScene;
+    public GameScene_SO menuScene;
 
     public VoidEvent_SO afterSceneLoadEvent;
     public FadeEvent_SO fadeEvent;
@@ -23,17 +28,19 @@ public class SceneHandler : MonoBehaviour
 
     private void Start()
     {
-        NewGame();
+        sceneLoadEvent.RaiseEvent(menuScene, menuPosition, true);
     }
 
     private void OnEnable()
     {
         sceneLoadEvent.loadRequestEvent += OnLoadRequestEvent;
+        newGameEvent.OnEventRaised += NewGame;
     }
 
     private void OnDisable()
     {
         sceneLoadEvent.loadRequestEvent -= OnLoadRequestEvent;
+        newGameEvent.OnEventRaised -= NewGame;
     }
 
     private void OnLoadRequestEvent(GameScene_SO scene, Vector3 location, bool fadeScreen)
@@ -62,6 +69,7 @@ public class SceneHandler : MonoBehaviour
         }
 
         yield return new WaitForSeconds(fadeDuration);
+        unLoadSceneEvent.RaiseEvent(sceneToGo, locationToGo, true);
         yield return currentlyLoadedScene.sceneReference.UnLoadScene();
         playerTransform.gameObject.SetActive(false);
 
@@ -71,7 +79,7 @@ public class SceneHandler : MonoBehaviour
     private void NewGame()
     {
         sceneToGo = firstLoadScene;
-        OnLoadRequestEvent(sceneToGo, firstPosition, true);
+        sceneLoadEvent.RaiseEvent(sceneToGo, firstPosition, true);
     }
 
     private void LoadNewScene()
@@ -96,6 +104,8 @@ public class SceneHandler : MonoBehaviour
         }
 
         isLoading = false;
+
+        if (currentlyLoadedScene.type == SceneTypes.Menu) return;
         afterSceneLoadEvent.RaiseEvent();
     }
 }

@@ -27,6 +27,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a4d49795b2afed4e9b5e17a1197253c
+    m_Address: Assets/Scenes/Menu.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d7b033b7969995f4b9b4e9e73ced6974
     m_Address: Assets/Scenes/Forest.unity
     m_ReadOnly: 0
