@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
+    public VoidEvent_SO afterSceneLoadedEvent;
     private CinemachineConfiner2D confiner2D;
     public CinemachineImpulseSource impulseSource;
 
@@ -14,21 +15,23 @@ public class CameraControl : MonoBehaviour
     private void OnEnable()
     {
         EventHandler.CameraShakeEvent += OnCameraShakeEvent;
+        afterSceneLoadedEvent.OnEventRaised += OnAfterSceneLoadEvent;
     }
 
     private void OnDisable()
     {
         EventHandler.CameraShakeEvent -= OnCameraShakeEvent;
+        afterSceneLoadedEvent.OnEventRaised -= OnAfterSceneLoadEvent;
+    }
+
+    private void OnAfterSceneLoadEvent()
+    {
+        GetNewCameraBounds();
     }
 
     private void OnCameraShakeEvent()
     {
         impulseSource.GenerateImpulse();
-    }
-
-    private void Start()
-    {
-        GetNewCameraBounds();
     }
 
     private void GetNewCameraBounds()
