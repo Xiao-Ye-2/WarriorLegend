@@ -11,10 +11,15 @@ public class UIManager : MonoBehaviour
     public PlayerStatBar playerStatBar;
     public VoidEvent_SO loadDataEvent;
     public VoidEvent_SO gameOverEvent;
+    public FloatEvent_SO syncVolumeEvent;
     public VoidEvent_SO backToMenuEvent;
+    public VoidEvent_SO pauseGameEvent;
     public CharacterEvent_SO healthEvent;
     public GameOverPanel gameOverPanel;
     public Button restartBtn;
+    public Button settingBtn;
+    public GameObject settingPanel;
+    public Slider volumeSlider;
     public GameObject mobileInputCanvas;
 
     private void Awake()
@@ -22,6 +27,7 @@ public class UIManager : MonoBehaviour
         #if UNITY_STANDALONE
             mobileInputCanvas.SetActive(false);
         #endif
+        settingBtn.onClick.AddListener(ToggleSettingPanel);
     }
 
     private void OnEnable()
@@ -31,6 +37,7 @@ public class UIManager : MonoBehaviour
         loadDataEvent.OnEventRaised += OnLoadDataEvent;
         gameOverEvent.OnEventRaised += OnGameOverEvent;
         backToMenuEvent.OnEventRaised += OnLoadDataEvent;
+        syncVolumeEvent.OnEventRaised += OnSyncVolumeEvent;
     }
 
     private void OnDisable()
@@ -40,7 +47,28 @@ public class UIManager : MonoBehaviour
         loadDataEvent.OnEventRaised -= OnLoadDataEvent;
         gameOverEvent.OnEventRaised -= OnGameOverEvent;
         backToMenuEvent.OnEventRaised -= OnLoadDataEvent;
+        syncVolumeEvent.OnEventRaised -= OnSyncVolumeEvent;
     }
+
+    private void OnSyncVolumeEvent(float amount)
+    {
+        volumeSlider.value = (amount + 80) * 0.01f;
+    }
+
+    private void ToggleSettingPanel()
+    {
+        if (settingPanel.activeInHierarchy)
+        {
+            settingPanel.SetActive(false);
+            Time.timeScale = 1;
+        } else
+        {
+            settingPanel.SetActive(true);
+            Time.timeScale = 0;
+            pauseGameEvent.RaiseEvent();
+        }
+    }
+
 
     private void OnGameOverEvent()
     {
