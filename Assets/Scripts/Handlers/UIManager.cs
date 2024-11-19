@@ -15,6 +15,14 @@ public class UIManager : MonoBehaviour
     public CharacterEvent_SO healthEvent;
     public GameOverPanel gameOverPanel;
     public Button restartBtn;
+    public GameObject mobileInputCanvas;
+
+    private void Awake()
+    {
+        #if UNITY_STANDALONE
+            mobileInputCanvas.SetActive(false);
+        #endif
+    }
 
     private void OnEnable()
     {
