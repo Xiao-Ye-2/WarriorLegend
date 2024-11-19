@@ -25,6 +25,7 @@ public class SavePoint : MonoBehaviour, IInteractable
             spriteRenderer.sprite = savePointOn;
             GetComponent<Collider2D>().enabled = false;
             lightObj.SetActive(true);
+            saveGameEvent.RaiseEvent();
         }
     }
 }

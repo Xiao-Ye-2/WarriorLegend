@@ -6,7 +6,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 
-public class SceneHandler : MonoBehaviour
+public class SceneHandler : MonoBehaviour, ISaveable
 {
     public Transform playerTransform;
     public Vector3 firstPosition;
@@ -14,6 +14,7 @@ public class SceneHandler : MonoBehaviour
     public SceneLoad_SO sceneLoadEvent;
     public SceneLoad_SO unLoadSceneEvent;
     public VoidEvent_SO newGameEvent;
+    public VoidEvent_SO backToMenuEvent;
     public GameScene_SO  firstLoadScene;
     public GameScene_SO menuScene;
 
@@ -35,12 +36,26 @@ public class SceneHandler : MonoBehaviour
     {
         sceneLoadEvent.loadRequestEvent += OnLoadRequestEvent;
         newGameEvent.OnEventRaised += NewGame;
+        backToMenuEvent.OnEventRaised += OnBackToMenuEvent;
+
+        ISaveable saveable = this;
+        saveable.RegisterSaveData();
     }
 
     private void OnDisable()
     {
         sceneLoadEvent.loadRequestEvent -= OnLoadRequestEvent;
         newGameEvent.OnEventRaised -= NewGame;
+        backToMenuEvent.OnEventRaised -= OnBackToMenuEvent;
+
+        ISaveable saveable = this;
+        saveable.UnRegisterSaveData();
+    }
+
+    private void OnBackToMenuEvent()
+    {
+        sceneToGo = menuScene;
+        sceneLoadEvent.RaiseEvent(sceneToGo, menuPosition, true);
     }
 
     private void OnLoadRequestEvent(GameScene_SO scene, Vector3 location, bool fadeScreen)
@@ -107,5 +122,25 @@ public class SceneHandler : MonoBehaviour
 
         if (currentlyLoadedScene.type == SceneTypes.Menu) return;
         afterSceneLoadEvent.RaiseEvent();
+    }
+
+    public DataDefinition GetDataID()
+    {
+        return GetComponent<DataDefinition>();
+    }
+
+    public void LoadGameData(Data data)
+    {
+        var playerID = playerTransform.GetComponent<DataDefinition>().ID;
+        if (data.characterPosDic.ContainsKey(playerID))
+        {
+            sceneToGo = data.GetGameScene();
+            OnLoadRequestEvent(sceneToGo, data.characterPosDic[playerID], true);
+        }
+    }
+
+    public void SaveGameData(Data data)
+    {
+        data.SaveGameScene(currentlyLoadedScene);
     }
 }

@@ -63,7 +63,6 @@ public abstract class Enemy : MonoBehaviour
     private void OnEnable()
     {
         character.OnHurtEvent += OnTakeDamage;
-        character.OnDeadEvent += OnDie;
         currentState = patrolState;
         currentState.OnEnter(this);
     }
@@ -71,7 +70,6 @@ public abstract class Enemy : MonoBehaviour
     private void OnDisable()
     {
         character.OnHurtEvent -= OnTakeDamage;
-        character.OnDeadEvent -= OnDie;
         currentState.OnExit();
     }
 
@@ -160,7 +158,7 @@ public abstract class Enemy : MonoBehaviour
         isHurt = false;
     }
 
-    private void OnDie()
+    public void OnDie()
     {
         gameObject.layer = 2;
         isDead = true;

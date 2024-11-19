@@ -5,8 +5,10 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D), typeof(PhysicsCheck), typeof(Character))]
 public class PlayerController : MonoBehaviour
 {
-    public SceneLoad_SO loadEvent;
+    public SceneLoad_SO sceneLoadEvent;
+    public VoidEvent_SO dataLoadEvent;
     public VoidEvent_SO afterSceneLoadedEvent;
+    public VoidEvent_SO backToMenuEvent;
     private PlayerInputControl inputControl;
     private Vector2 inputDirection;
     private Rigidbody2D rb2d;
@@ -40,24 +42,31 @@ public class PlayerController : MonoBehaviour
 
         inputControl.Gameplay.Jump.performed += Jump;
         inputControl.Gameplay.Attack.started += PlayerAttack;
+        inputControl.Enable();
     }
 
     private void OnEnable()
     {
         character.OnHurtEvent += PlayerHurt;
-        character.OnDeadEvent += PlayerDead;
-        loadEvent.loadRequestEvent += OnLoadEvent;
+        sceneLoadEvent.loadRequestEvent += OnSceneLoadEvent;
         afterSceneLoadedEvent.OnEventRaised += OnAfterSceneLoadEvent;
-        inputControl.Enable();
+        dataLoadEvent.OnEventRaised += OnDataLoadEvent;
+        backToMenuEvent.OnEventRaised += OnDataLoadEvent;
     }
 
     private void OnDisable()
     {
         character.OnHurtEvent -= PlayerHurt;
-        character.OnDeadEvent -= PlayerDead;
-        loadEvent.loadRequestEvent -= OnLoadEvent;
+        sceneLoadEvent.loadRequestEvent -= OnSceneLoadEvent;
         afterSceneLoadedEvent.OnEventRaised -= OnAfterSceneLoadEvent;
+        dataLoadEvent.OnEventRaised -= OnDataLoadEvent;
+        backToMenuEvent.OnEventRaised -= OnDataLoadEvent;
         inputControl.Disable();
+    }
+
+    private void OnDataLoadEvent()
+    {
+        isDead = false;
     }
 
     private void Update()
@@ -72,7 +81,7 @@ public class PlayerController : MonoBehaviour
         Move();
     }
 
-    private void OnLoadEvent(GameScene_SO sceneToLoad, Vector3 positionToGo, bool fade)
+    private void OnSceneLoadEvent(GameScene_SO sceneToLoad, Vector3 positionToGo, bool fade)
     {
         inputControl.Gameplay.Disable();
     }

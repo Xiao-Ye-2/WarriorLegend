@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 6387257859740008726}
   - component: {fileID: 5342888979760614470}
   - component: {fileID: 6408072646858907300}
+  - component: {fileID: 2993731066383078699}
   m_Layer: 8
   m_Name: Boar
   m_TagString: Untagged
@@ -239,6 +240,21 @@ MonoBehaviour:
   OnHealthChange:
     m_PersistentCalls:
       m_Calls: []
+  OnDeadEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5342888979760614470}
+        m_TargetAssemblyTypeName: Enemy, Assembly-CSharp
+        m_MethodName: OnDie
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &6387257859740008726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,3 +313,17 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &2993731066383078699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3929573528361839630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68c8c7fe97e96724294005344cec5ac9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  persistentType: 0
+  ID: 2195a1f0-5cb5-4d0c-bd85-22e2ea0814d5
